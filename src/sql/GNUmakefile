@@ -61,7 +61,7 @@ do_subst		= sed \
 			  -e 's/[@]PCSC_BUILD[@]/$(PCSC_BUILD)/g' \
 
 
-.PHONY: all clean distclean database database-drop database-reset datbase-sql demo demo-sql schema schema-sql
+.PHONY: all clean distclean database database-drop reset datbase-sql demo demo-sql schema schema-sql
 
 
 all:
@@ -75,7 +75,7 @@ all:
 	@echo "   make schema-sql     - show SQL to create database schema"
 	@echo "   make demo-sql       - show SQL to add demo/test records to datbase"
 	@echo ""
-	@echo "   make dataabse-reset - drops database tables"
+	@echo "   make reset          - drops database tables"
 	@echo "   make dataabse-drop  - drops database and role"
 	@echo ""
 	@echo "Variables:"
@@ -110,7 +110,7 @@ database-drop:
 	@$(do_subst)    pigeon-db-drop.sql  | $(PSQL_COMMAND)
 
 
-database-reset:
+reset:
 	@echo 'do_subst pigeon-db-reset.sql | $(PSQL_COMMAND)'
 	@$(do_subst)    pigeon-db-reset.sql | $(PSQL_COMMAND)
 
