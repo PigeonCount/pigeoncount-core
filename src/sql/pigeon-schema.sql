@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS tokenType
 (
    id                INT               NOT NULL UNIQUE,
    typeName          VARCHAR(32)       NOT NULL,
-   tokenDesc         VARCHAR(128)      NOT NULL,
+   typeDesc          VARCHAR(128)      NOT NULL,
    PRIMARY KEY       ( id )
 );
 CREATE INDEX
