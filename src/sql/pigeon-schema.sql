@@ -105,7 +105,8 @@ CREATE INDEX
  */
 CREATE TABLE IF NOT EXISTS account
 (
-   id                UUID            NOT NULL UNIQUE DEFAULT gen_random_uuid(),
+   id                SERIAL,
+   guid              UUID            NOT NULL UNIQUE DEFAULT gen_random_uuid(),
    email             VARCHAR(128)    NOT NULL UNIQUE,
    givenName         VARCHAR(32)     NOT NULL,
    surname           VARCHAR(32)     NOT NULL,
@@ -114,8 +115,13 @@ CREATE TABLE IF NOT EXISTS account
 CREATE INDEX
    IF NOT EXISTS     account_idx_id
    ON                account
-   USING             hash
+   USING             btree
                      ( id );
+CREATE INDEX
+   IF NOT EXISTS     account_idx_guid
+   ON                account
+   USING             hash
+                     ( guid );
 CREATE INDEX
    IF NOT EXISTS     account_idx_email
    ON                account
