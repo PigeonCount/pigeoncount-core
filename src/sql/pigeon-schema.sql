@@ -129,6 +129,36 @@ CREATE INDEX
 -- //             //
 -- /////////////////
 
+CREATE OR REPLACE FUNCTION pigeon_version()
+   RETURNS           TABLE
+                     (  schemaVersion     INT,
+                        schemaAge         INT,
+                        pkgMajor          INT,
+                        pkgMinor          INT,
+                        pkgPatch          INT,
+                        pkgBuild          VARCHAR(128),
+                        pkgUpdated        TIMESTAMP
+                     )
+   LANGUAGE          plpgsql
+   SECURITY          DEFINER
+   STABLE
+   AS                $$
+DECLARE
+BEGIN
+   RETURN QUERY
+      SELECT         dbSchemaVersion      AS schemaVersion,
+                     dbSchemaAge          AS schemaAge,
+                     versionMajor         AS pkgMajor,
+                     versionMinor         AS pkgMinor,
+                     versionPatch         AS pkgPatch,
+                     versionBuild         AS pkgBuild,
+                     updated              AS pkgUpdated
+         FROM        upgraded
+         ORDER BY    updated              DESC
+         LIMIT       1;
+END;
+$$;
+
 
 -- /////////////////////////
 -- //                     //
