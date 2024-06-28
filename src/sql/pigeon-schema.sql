@@ -72,13 +72,13 @@ SET client_min_messages TO WARNING;
 CREATE TABLE IF NOT EXISTS upgraded
 (
    id                SERIAL,
-   dbSchemaVersion   INT             NOT NULL DEFAULT 0,
-   dbSchemaAge       INT             NOT NULL DEFAULT 0,
-   versionMajor      INT             NOT NULL,
-   versionMinor      INT             NOT NULL,
-   versionPatch      INT             NOT NULL,
-   versionBuild      VARCHAR(128)    NOT NULL DEFAULT 'n/a',
-   updated           TIMESTAMP       NOT NULL DEFAULT NOW(),
+   dbSchemaVersion   INT               NOT NULL DEFAULT 0,
+   dbSchemaAge       INT               NOT NULL DEFAULT 0,
+   versionMajor      INT               NOT NULL,
+   versionMinor      INT               NOT NULL,
+   versionPatch      INT               NOT NULL,
+   versionBuild      VARCHAR(128)      NOT NULL DEFAULT 'n/a',
+   updated           TIMESTAMP         NOT NULL DEFAULT NOW(),
    PRIMARY KEY       ( id )
 );
 CREATE INDEX
