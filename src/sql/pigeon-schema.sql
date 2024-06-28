@@ -103,7 +103,7 @@ CREATE INDEX
  *  surname
  *  : user's last name or surname
  */
-CREATE TABLE IF NOT EXISTS pcscUser
+CREATE TABLE IF NOT EXISTS account
 (
    id                UUID            NOT NULL UNIQUE DEFAULT gen_random_uuid(),
    email             VARCHAR(128)    NOT NULL UNIQUE,
@@ -112,8 +112,8 @@ CREATE TABLE IF NOT EXISTS pcscUser
    PRIMARY KEY       ( id )
 );
 CREATE INDEX
-   IF NOT EXISTS     pcscUser_idx_id
-   ON                pcscUser
+   IF NOT EXISTS     account_idx_id
+   ON                account
    USING             hash
                      ( id );
 

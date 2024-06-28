@@ -35,7 +35,7 @@ SET client_min_messages TO WARNING;
 
 
 DROP TABLE iF EXISTS upgraded;
-DROP TABLE IF EXISTS pcscUser;
+DROP TABLE IF EXISTS account;
 
 
 /* end of sql */
