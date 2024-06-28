@@ -34,7 +34,7 @@ SET client_min_messages TO WARNING;
 \set ON_ERROR_STOP on
 
 
-DROP TABLE iF EXISTS pcscUpgraded;
+DROP TABLE iF EXISTS upgraded;
 DROP TABLE IF EXISTS pcscUser;
 
 

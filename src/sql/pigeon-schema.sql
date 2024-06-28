@@ -69,7 +69,7 @@ SET client_min_messages TO WARNING;
  *  updated
  *  : timestamp of last database schema update
  */
-CREATE TABLE IF NOT EXISTS pcscUpgraded
+CREATE TABLE IF NOT EXISTS upgraded
 (
    id                SERIAL,
    dbSchemaVersion   INT             NOT NULL DEFAULT 0,
@@ -82,8 +82,8 @@ CREATE TABLE IF NOT EXISTS pcscUpgraded
    PRIMARY KEY       ( id )
 );
 CREATE INDEX
-   IF NOT EXISTS     pcscUpgraded_idx_id
-   ON                pcscUpgraded
+   IF NOT EXISTS     upgraded_idx_id
+   ON                upgraded
    USING             btree
                      ( id );
 
@@ -140,7 +140,7 @@ CREATE INDEX
 
 -- add current software version to database
 INSERT INTO
-   pcscUpgraded      (  dbSchemaVersion,
+   upgraded          (  dbSchemaVersion,
                         dbSchemaAge,
                         versionMajor,
                         versionMinor,
@@ -154,7 +154,7 @@ INSERT INTO
                      @PCSC_PATCH@,           -- versionPatch
                      '@PCSC_BUILD@'          -- versionBuild
    WHERE NOT EXISTS  (  SELECT         1
-                           FROM        pcscUpgraded
+                           FROM        upgraded
                            WHERE       dbSchemaVersion   = 0
                               AND      dbSchemaAge       = 0
                               AND      versionMajor      = @PCSC_MAJOR@
