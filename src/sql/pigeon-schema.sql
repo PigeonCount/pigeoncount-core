@@ -106,10 +106,10 @@ CREATE INDEX
 CREATE TABLE IF NOT EXISTS account
 (
    id                SERIAL,
-   guid              UUID            NOT NULL UNIQUE DEFAULT gen_random_uuid(),
-   email             VARCHAR(128)    NOT NULL UNIQUE,
-   givenName         VARCHAR(32)     NOT NULL,
-   surname           VARCHAR(32)     NOT NULL,
+   guid              UUID              NOT NULL UNIQUE DEFAULT gen_random_uuid(),
+   email             VARCHAR(128)      NOT NULL UNIQUE,
+   givenName         VARCHAR(32)       NOT NULL,
+   surname           VARCHAR(32)       NOT NULL,
    PRIMARY KEY       ( id )
 );
 CREATE INDEX
