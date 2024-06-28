@@ -160,6 +160,59 @@ CREATE INDEX
                      ( email );
 
 
+/*
+ *  Pigeon Count User
+ *
+ *  id
+ *  : The primary key of a specific entry
+ *
+ *  email
+ *  : user's email address
+ *
+ *  givenName
+ *  : user's first name or given name
+ *
+ *  surname
+ *  : user's last name or surname
+ */
+CREATE TABLE IF NOT EXISTS accountToken
+(
+   id                SERIAL,
+   tokenTypeId       INT               NOT NULL,
+   accountId         INT               NOT NULL,
+   token             VARCHAR(32)       NOT NULL,
+   issued            TIMESTAMP         NOT NULL,
+   expires           TIMESTAMP         NOT NULL,
+   PRIMARY KEY       ( id ),
+   FOREIGN KEY      ( tokenTypeId )
+      REFERENCES    tokenType
+                    ( id ),
+   FOREIGN KEY      ( accountId )
+      REFERENCES    account
+                    ( id )
+);
+CREATE INDEX
+   IF NOT EXISTS     accountToken_idx_id
+   ON                accountToken
+   USING             hash
+                     ( id );
+CREATE INDEX
+   IF NOT EXISTS     accountToken_idx_tokenTypeId
+   ON                accountToken
+   USING             hash
+                     ( tokenTypeId );
+CREATE INDEX
+   IF NOT EXISTS     accountToken_idx_accountId
+   ON                accountToken
+   USING             hash
+                     ( accountId );
+CREATE INDEX
+   IF NOT EXISTS     accountToken_idx_expires
+   ON                accountToken
+   USING             hash
+                     ( expires );
+
+
 -- /////////////////
 -- //             //
 -- //  Functions  //
