@@ -45,7 +45,7 @@ PG_USER			?= pigeon
 PG_PASS			?=
 
 PSQL			?= psql
-PSQL_OPTS		?= -q
+PSQL_OPTS		?= -q -h localhost -U $(USER)
 PSQL_COMMAND		:= $(PSQL) $(PSQL_OPTS)
 
 
