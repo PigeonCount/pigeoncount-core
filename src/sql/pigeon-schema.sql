@@ -89,6 +89,37 @@ CREATE INDEX
 
 
 /*
+ *  Token Type
+ *
+ *  id
+ *  : The primary key of a specific entry
+ *
+ *  typeName
+ *  : the name of the token type
+ *
+ *  tokenDesc
+ *  : token type description
+ */
+CREATE TABLE IF NOT EXISTS tokenType
+(
+   id                INT               NOT NULL UNIQUE,
+   typeName          VARCHAR(32)       NOT NULL,
+   tokenDesc         VARCHAR(128)      NOT NULL,
+   PRIMARY KEY       ( id )
+);
+CREATE INDEX
+   IF NOT EXISTS     tokenType_idx_id
+   ON                tokenType
+   USING             btree
+                     ( id );
+CREATE INDEX
+   IF NOT EXISTS     tokenType_idx_typeName
+   ON                tokenType
+   USING             hash
+                     ( typeName );
+
+
+/*
  *  Pigeon Count User
  *
  *  id
