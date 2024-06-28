@@ -52,7 +52,7 @@ SET client_min_messages TO WARNING;
  *
  *  dbSchemaAge
  *  : number of previous versions which are compatible with this database
- *    schema version, similar to libtool ABI versions
+ *  : schema version, similar to libtool ABI versions
  *
  *  versionMajor
  *  : Pigeon Count software major version
@@ -129,6 +129,36 @@ CREATE INDEX
 -- //             //
 -- /////////////////
 
+/*
+ *  query database and software versions
+ *
+ *  % SELECT * FROM pigeon_version();
+ *
+ *  Returns table with the following columns:
+ *
+ *  schemaVersion
+ *  : current schema version
+ *
+ *  schemaAge
+ *  : number of prior schema versions which are compatible with the current
+ *  : version of the schema
+ *
+ *  pkgMajor
+ *  : major software package version
+ *
+ *  pkgMinor
+ *  : minor software package version
+ *
+ *  pkgPatch
+ *  : patch level of current sofrware package
+ *
+ *  pkgBuild
+ *  : build version of software package (i.e. software revision control system
+ *  : ID used by package)
+ *
+ *  pkgUpdated
+ *  : timestamp of package install or latest upgrade
+ */
 CREATE OR REPLACE FUNCTION pigeon_version()
    RETURNS           TABLE
                      (  schemaVersion     INT,
