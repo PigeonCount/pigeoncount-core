@@ -280,6 +280,69 @@ END;
 $$;
 
 
+/*
+ *  adds or updates token type
+ *
+ *  % SELECT pigeon_tokenType_add(
+ *       ttId        := 1,
+ *       ttName      := 'user',
+ *       ttDesc      := 'user login session'
+ *    );
+ *
+ *  ttId
+ *  : ID of token type to add or update
+ *
+ *  ttName
+ *  : name of the token type
+ *
+ *  ttDesc
+ *  : description of the token type
+ */
+CREATE OR REPLACE FUNCTION pigeon_tokenType_add
+   (  ttId           INTEGER,
+      ttName         VARCHAR(32),
+      ttDesc         VARCHAR(128)         DEFAULT NULL
+   )
+   RETURNS           INTEGER
+   LANGUAGE          plpgsql
+   SECURITY          DEFINER
+   VOLATILE
+   AS                $$
+DECLARE
+   tokenTypeId       INTEGER;
+BEGIN
+   -- searches for tokenType ID
+   SELECT            id                   INTO  tokenTypeId
+      FROM           tokenType
+      WHERE          id                   =     ttId;
+
+   -- updates existing token type
+   IF ( tokenTypeId IS NOT NULL ) THEN
+      UPDATE         tokenType
+         SET         typeName             =     ttName,
+                     typeDesc             =     ttDesc
+         WHERE       id                   =     ttId
+         RETURNING   id                   INTO  tokenTypeId;
+      RETURN tokenTypeId;
+   END IF;
+
+   -- adds new tokenType
+   INSERT INTO       tokenType
+                     (  id,
+                        typeName,
+                        typeDesc
+                     )
+      VALUES         (  ttId,
+                        ttName,
+                        ttDesc
+                     )
+      RETURNING      id                   INTO  tokenTypeId;
+
+   RETURN            tokenTypeId;
+END;
+$$;
+
+
 -- /////////////////////////
 -- //                     //
 -- //  Trigger Functions  //
@@ -317,6 +380,12 @@ INSERT INTO
                               AND      versionPatch      = @PCSC_PATCH@
                               AND      versionBuild      = '@PCSC_BUILD@'
                      );
+
+
+-- add token types
+SELECT pigeon_tokenType_add(  0,  'unknown',       'Unknown user token' );
+SELECT pigeon_tokenType_add(  1,  'login',         'login session' );
+SELECT pigeon_tokenType_add(  2,  'application',   'application token' );
 
 
 /* end of sql */
