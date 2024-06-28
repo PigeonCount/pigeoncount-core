@@ -116,6 +116,11 @@ CREATE INDEX
    ON                account
    USING             hash
                      ( id );
+CREATE INDEX
+   IF NOT EXISTS     account_idx_email
+   ON                account
+   USING             hash
+                     ( email );
 
 
 -- /////////////////
