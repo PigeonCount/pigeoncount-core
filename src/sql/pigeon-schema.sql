@@ -120,6 +120,39 @@ CREATE INDEX
 
 
 /*
+ *  Credential Type
+ *
+ *  id
+ *  : The primary key of a specific entry
+ *
+ *  typeName
+ *  : the name of the credential type
+ *
+ *  tokenDesc
+ *  : credential type description
+ */
+CREATE TABLE IF NOT EXISTS credType
+(
+   id                INT               NOT NULL UNIQUE,
+   name              VARCHAR(32)       NOT NULL UNIQUE,
+   alias             VARCHAR(32)       NOT NULL,
+   description       VARCHAR(128)      NOT NULL,
+   twofactor         BOOLEAN           NOT NULL DEFAULT TRUE,
+   PRIMARY KEY       ( id )
+);
+CREATE INDEX
+   IF NOT EXISTS     credType_idx_id
+   ON                credType
+   USING             btree
+                     ( id );
+CREATE INDEX
+   IF NOT EXISTS     credType_idx_name
+   ON                credType
+   USING             hash
+                     ( name );
+
+
+/*
  *  Pigeon Count User
  *
  *  id
@@ -218,6 +251,91 @@ CREATE INDEX
 -- //  Functions  //
 -- //             //
 -- /////////////////
+
+/*
+ *  adds or updates token type
+ *
+ *  % SELECT pigeon_credType(
+ *       ctId        := 1,
+ *       ctName      := 'pwhash',
+ *       ctAlias     := 'password',
+ *       ctDesc      := 'UNIX crypt password hash'
+ *    );
+ *
+ *  newId
+ *  : ID of credential type to add or update
+ *
+ *  newName
+ *  : name of the credential type
+ *
+ *  newAlias
+ *  : alias or user readable name for credential type
+ *
+ *  newDesc
+ *  : description of the credential type
+ */
+CREATE OR REPLACE FUNCTION      pigeon_credType
+   (  newId          INTEGER,
+      newName        VARCHAR(32),
+      newAlias       VARCHAR(32)          DEFAULT NULL,
+      newDesc        VARCHAR(128)         DEFAULT NULL
+   )
+   RETURNS           INTEGER
+   LANGUAGE          plpgsql
+   SECURITY          DEFINER
+   VOLATILE
+   AS                $$
+DECLARE
+   credTypeId        INTEGER;
+   is2fa             BOOLEAN;
+BEGIN
+   -- sets defaults
+   if ( newAlias IS NULL ) THEN
+      newAlias       :=    newName;
+   END IF;
+
+   -- searches for tokenType ID
+   SELECT            id                   INTO  credTypeId
+      FROM           credType
+      WHERE          id                   =     newId;
+
+   -- updates existing token type
+   IF ( credTypeId IS NOT NULL ) THEN
+      UPDATE         credType
+         SET         name                 =     newName,
+                     alias                =     newAlias,
+                     description          =     newDesc
+         WHERE       id                   =     newId
+         RETURNING   id                   INTO  credTypeId;
+      RETURN credTypeId;
+   END IF;
+
+   -- sets is2FA
+   is2fa := TRUE;
+   IF ( newId = 0 ) THEN
+       is2fa := FALSE;
+   END IF;
+
+   -- adds new tokenType
+   INSERT INTO       credType
+                     (  id,
+                        name,
+                        alias,
+                        description,
+                        twofactor
+                     )
+      VALUES         (  newId,
+                        newName,
+                        newAlias,
+                        newDesc,
+                        is2fa
+                     )
+      RETURNING      id                   INTO  credTypeId;
+
+   RETURN            credTypeId;
+END;
+$$;
+
 
 /*
  *  query database and software versions
@@ -386,6 +504,12 @@ INSERT INTO
 SELECT pigeon_tokenType_add(  0,  'unknown',       'Unknown user token' );
 SELECT pigeon_tokenType_add(  1,  'login',         'login session' );
 SELECT pigeon_tokenType_add(  2,  'application',   'application token' );
+
+
+-- add token types
+SELECT pigeon_credType(    0, 'pwhash',   'Password',    'UNIX crypt password hash' );
+SELECT pigeon_credType(    1, 'totp',     'TOTP',        'timed-base one-time password' );
+
 
 
 /* end of sql */

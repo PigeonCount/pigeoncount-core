@@ -37,8 +37,10 @@ SET client_min_messages TO WARNING;
 DROP TABLE iF EXISTS upgraded;
 DROP TABLE IF EXISTS accountToken;
 DROP TABLE IF EXISTS account;
+DROP TABLE iF EXISTS credType;
 DROP TABLE iF EXISTS tokenType;
 
+DROP FUNCTION IF EXISTS pigeon_credType;
 DROP FUNCTION IF EXISTS pigeon_version;
 DROP FUNCTION IF EXISTS pigeon_tokenType_add;
 
