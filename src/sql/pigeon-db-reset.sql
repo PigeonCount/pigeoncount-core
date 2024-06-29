@@ -40,6 +40,7 @@ DROP TABLE IF EXISTS account;
 DROP TABLE iF EXISTS tokenType;
 
 DROP FUNCTION IF EXISTS pigeon_version;
+DROP FUNCTION IF EXISTS pigeon_tokenType_add;
 
 
 /* end of sql */
