@@ -281,9 +281,11 @@ CREATE TABLE IF NOT EXISTS accountToken
    id                SERIAL,
    tokenTypeId       INT               NOT NULL,
    accountId         INT               NOT NULL,
-   token             VARCHAR(128)      NOT NULL,
-   issued            TIMESTAMP         NOT NULL DEFAULT NOW(),
-   expires           TIMESTAMP         NOT NULL DEFAULT NOW() + '1 DAY',
+   description       VARCHAR(32),
+   token             UUID              NOT NULL UNIQUE DEFAULT gen_random_uuid(),
+   created           TIMESTAMP         NOT NULL DEFAULT NOW(),
+   notBefore         TIMESTAMP         NOT NULL DEFAULT NOW(),
+   notAfter          TIMESTAMP         NOT NULL DEFAULT NOW() + '1 DAY',
    PRIMARY KEY       ( id ),
    FOREIGN KEY      ( tokenTypeId )
       REFERENCES    tokenType
@@ -308,10 +310,15 @@ CREATE INDEX
    USING             hash
                      ( accountId );
 CREATE INDEX
-   IF NOT EXISTS     accountToken_idx_expires
+   IF NOT EXISTS     accountToken_idx_notBefore
    ON                accountToken
    USING             hash
-                     ( expires );
+                     ( notBefore );
+CREATE INDEX
+   IF NOT EXISTS     accountToken_idx_notAfter
+   ON                accountToken
+   USING             hash
+                     ( notAfter );
 
 
 -- /////////////////

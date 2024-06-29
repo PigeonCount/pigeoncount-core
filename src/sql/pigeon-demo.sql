@@ -35,4 +35,88 @@ SET client_min_messages TO WARNING;
 \set ON_ERROR_STOP on
 
 
+-- add demo user admin@localhost
+INSERT INTO
+   account           (  email,
+                        givenName,
+                        surname
+                     )
+   VALUES            (  'admin@localhost',
+                        'Administrator',
+                        'User'
+                     );
+INSERT INTO
+   accountCred       (  accountId,
+                        credTypeId,
+                        cred
+                     )
+   VALUES            (  ( SELECT id FROM account    WHERE account.email    LIKE 'admin@localhost' ),
+                        ( SELECT id FROM credType    WHERE credType.name    LIKE 'pwhash' ),
+                        '$6$V845Vg5Hf9gpQVqc$UjS3V8G1OhvbvuKdL4J0cmJWr4PgMUT8ARd15vdxEKoOP6Rgsdj7wdxZZcmfsvXDrcHSmffHiA5l1xLFu5cXwk'
+                     );
+INSERT INTO
+   accountToken      (  accountId,
+                        tokenTypeId,
+                        notAfter
+                     )
+   VALUES            (  ( SELECT id FROM account    WHERE account.email    LIKE 'admin@localhost' ),
+                        ( SELECT id FROM tokenType  WHERE tokenType.name   LIKE 'login' ),
+                        NOW() + INTERVAL '1 DAYS'
+                     );
+
+
+-- add demo user jdoe@example.com
+INSERT INTO
+   account           (  email,
+                        givenName,
+                        surname
+                     )
+   VALUES            (  'jdoe@example.com',
+                        'Joe',
+                        'Doe'
+                     );
+INSERT INTO
+   accountCred       (  accountId,
+                        credTypeId,
+                        cred
+                     )
+   VALUES            (  ( SELECT id FROM account    WHERE account.email    LIKE 'jdoe@example.com' ),
+                        ( SELECT id FROM credType    WHERE credType.name   LIKE 'pwhash' ),
+                        '$6$V845Vg5Hf9cpQVqc$UjS3V8G1OhvbvuKdL4J0cmJWr4PgMUT8ARd15vdxEKoOP6Rgsdj7wdxZZcmfsvXDrcHSmffHiA5l1xLFu5cXwk'
+                     );
+INSERT INTO
+   accountToken      (  description,
+                        accountId,
+                        tokenTypeId,
+                        notAfter
+                     )
+   VALUES            (  NULL,
+                        ( SELECT id FROM account    WHERE account.email    LIKE 'jdoe@example.com' ),
+                        ( SELECT id FROM tokenType  WHERE tokenType.name   LIKE 'login' ),
+                        NOW() + INTERVAL '1 DAYS'
+                     );
+INSERT INTO
+   accountToken      (  description,
+                        accountId,
+                        tokenTypeId,
+                        notAfter
+                     )
+   VALUES            (  'Blue Tablet',
+                        ( SELECT id FROM account    WHERE account.email    LIKE 'jdoe@example.com' ),
+                        ( SELECT id FROM tokenType  WHERE tokenType.name   LIKE 'application' ),
+                        NOW() + INTERVAL '1 YEARS'
+                     );
+INSERT INTO
+   accountToken      (  description,
+                        accountId,
+                        tokenTypeId,
+                        notAfter
+                     )
+   VALUES            (  'Phone',
+                        ( SELECT id FROM account    WHERE account.email    LIKE 'jdoe@example.com' ),
+                        ( SELECT id FROM tokenType  WHERE tokenType.name   LIKE 'application' ),
+                        NOW() + INTERVAL '1 YEARS'
+                     );
+
+
 /* end of sql */
