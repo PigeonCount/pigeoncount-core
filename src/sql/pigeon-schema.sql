@@ -180,9 +180,9 @@ CREATE TABLE IF NOT EXISTS accountToken
    id                SERIAL,
    tokenTypeId       INT               NOT NULL,
    accountId         INT               NOT NULL,
-   token             VARCHAR(32)       NOT NULL,
-   issued            TIMESTAMP         NOT NULL,
-   expires           TIMESTAMP         NOT NULL,
+   token             VARCHAR(128)      NOT NULL,
+   issued            TIMESTAMP         NOT NULL DEFAULT NOW(),
+   expires           TIMESTAMP         NOT NULL DEFAULT NOW() + '1 DAY',
    PRIMARY KEY       ( id ),
    FOREIGN KEY      ( tokenTypeId )
       REFERENCES    tokenType
