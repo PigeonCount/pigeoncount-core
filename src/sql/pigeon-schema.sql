@@ -199,6 +199,74 @@ CREATE INDEX
  *  id
  *  : The primary key of a specific entry
  *
+ *  accountId
+ *  : ID of the associated account
+ *
+ *  credTypeId
+ *  : ID of the credential type
+ *
+ *  cred
+ *  : the actual credential
+ *
+ *  modified
+ *  : timestamp of crendential's last modification
+ *
+ *  notBefore
+ *  : credential is not valid before timestamp
+ *
+ *  notAfter
+ *  : credential is not valid after timestamp
+ */
+CREATE TABLE IF NOT EXISTS accountCred
+(
+   id                SERIAL,
+   accountId         INTEGER           NOT NULL,
+   credTypeId        INTEGER           NOT NULL,
+   cred              VARCHAR(128)      NOT NULL,
+   modified          TIMESTAMP         NOT NULL DEFAULT NOW(),
+   notBefore         TIMESTAMP         NOT NULL DEFAULT NOW(),
+   notAfter          TIMESTAMP,
+   PRIMARY KEY       ( id ),
+   FOREIGN KEY       ( accountId )
+      REFERENCES     account
+                     ( id ),
+   FOREIGN KEY       ( credTypeId )
+      REFERENCES     credType
+                     ( id )
+);
+CREATE INDEX
+   IF NOT EXISTS     accountCred_idx_id
+   ON                accountCred
+   USING             hash
+                     ( id );
+CREATE INDEX
+   IF NOT EXISTS     accountCred_idx_accountId
+   ON                accountCred
+   USING             hash
+                     ( accountId );
+CREATE INDEX
+   IF NOT EXISTS     accountCred_idx_credTypeId
+   ON                accountCred
+   USING             hash
+                     ( credTypeId );
+CREATE INDEX
+   IF NOT EXISTS     accountCred_idx_notBefore
+   ON                accountCred
+   USING             hash
+                     ( notBefore );
+CREATE INDEX
+   IF NOT EXISTS     accountCred_idx_notAfter
+   ON                accountCred
+   USING             hash
+                     ( notAfter );
+
+
+/*
+ *  Pigeon Count User
+ *
+ *  id
+ *  : The primary key of a specific entry
+ *
  *  email
  *  : user's email address
  *
@@ -466,6 +534,51 @@ $$;
 -- //  Trigger Functions  //
 -- //                     //
 -- /////////////////////////
+
+/*
+ *  trigger functions for accountCred table
+ */
+CREATE OR REPLACE FUNCTION accountCred_before_insert
+   ( )
+   RETURNS           trigger
+   LANGUAGE          plpgsql
+   AS                $$
+DECLARE
+BEGIN
+
+   -- forces initial values
+   NEW.modified      := NOW();
+
+   RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION accountCred_before_update
+   ( )
+   RETURNS           trigger
+   LANGUAGE          plpgsql
+   AS                $$
+DECLARE
+BEGIN
+
+   -- forces initial values
+   NEW.modified      := NOW();
+
+   RETURN NEW;
+END;
+$$;
+
+-- accountCred table triggers
+CREATE OR REPLACE TRIGGER accountCred_before_insert
+   BEFORE            INSERT
+   ON                accountCred
+   FOR EACH          ROW
+   EXECUTE           PROCEDURE accountCred_before_insert();
+CREATE OR REPLACE TRIGGER accountCred_before_update
+   BEFORE            UPDATE
+   ON                accountCred
+   FOR EACH          ROW
+   EXECUTE           PROCEDURE accountCred_before_update();
 
 
 -- /////////////////
