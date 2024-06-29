@@ -41,8 +41,9 @@ DROP TABLE IF EXISTS account;
 DROP TABLE iF EXISTS credType;
 DROP TABLE iF EXISTS tokenType;
 
-DROP TRIGGER IF EXISTS accountCred_before_insert		ON 	accountCred;
-DROP TRIGGER IF EXISTS accountCred_before_update		ON 	accountCred;
+DROP TRIGGER IF EXISTS accountCred_before_insert      ON    accountCred;
+DROP TRIGGER IF EXISTS accountCred_before_update      ON    accountCred;
+
 
 DROP FUNCTION IF EXISTS accountCred_before_insert;
 DROP FUNCTION IF EXISTS accountCred_before_update;
