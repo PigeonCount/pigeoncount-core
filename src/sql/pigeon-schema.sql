@@ -274,7 +274,7 @@ CREATE INDEX
  *  newDesc
  *  : description of the credential type
  */
-CREATE OR REPLACE FUNCTION      pigeon_credType
+CREATE OR REPLACE FUNCTION pigeon_credType
    (  newId          INTEGER,
       newName        VARCHAR(32),
       newAlias       VARCHAR(32)          DEFAULT NULL,
