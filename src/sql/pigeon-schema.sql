@@ -338,6 +338,69 @@ $$;
 
 
 /*
+ *  adds or updates token type
+ *
+ *  % SELECT pigeon_tokenType(
+ *       ttId        := 1,
+ *       ttName      := 'user',
+ *       ttDesc      := 'user login session'
+ *    );
+ *
+ *  newId
+ *  : ID of token type to add or update
+ *
+ *  newName
+ *  : name of the token type
+ *
+ *  newDesc
+ *  : description of the token type
+ */
+CREATE OR REPLACE FUNCTION pigeon_tokenType
+   (  newId          INTEGER,
+      newName        VARCHAR(32),
+      newDesc        VARCHAR(128)         DEFAULT NULL
+   )
+   RETURNS           INTEGER
+   LANGUAGE          plpgsql
+   SECURITY          DEFINER
+   VOLATILE
+   AS                $$
+DECLARE
+   tokenTypeId       INTEGER;
+BEGIN
+   -- searches for tokenType ID
+   SELECT            id                   INTO  tokenTypeId
+      FROM           tokenType
+      WHERE          id                   =     newId;
+
+   -- updates existing token type
+   IF ( tokenTypeId IS NOT NULL ) THEN
+      UPDATE         tokenType
+         SET         name                 =     newName,
+                     description          =     newDesc
+         WHERE       id                   =     newId
+         RETURNING   id                   INTO  tokenTypeId;
+      RETURN tokenTypeId;
+   END IF;
+
+   -- adds new tokenType
+   INSERT INTO       tokenType
+                     (  id,
+                        name,
+                        description
+                     )
+      VALUES         (  newId,
+                        newName,
+                        newDesc
+                     )
+      RETURNING      id                   INTO  tokenTypeId;
+
+   RETURN            tokenTypeId;
+END;
+$$;
+
+
+/*
  *  query database and software versions
  *
  *  % SELECT * FROM pigeon_version();
@@ -398,69 +461,6 @@ END;
 $$;
 
 
-/*
- *  adds or updates token type
- *
- *  % SELECT pigeon_tokenType_add(
- *       ttId        := 1,
- *       ttName      := 'user',
- *       ttDesc      := 'user login session'
- *    );
- *
- *  ttId
- *  : ID of token type to add or update
- *
- *  ttName
- *  : name of the token type
- *
- *  ttDesc
- *  : description of the token type
- */
-CREATE OR REPLACE FUNCTION pigeon_tokenType_add
-   (  ttId           INTEGER,
-      ttName         VARCHAR(32),
-      ttDesc         VARCHAR(128)         DEFAULT NULL
-   )
-   RETURNS           INTEGER
-   LANGUAGE          plpgsql
-   SECURITY          DEFINER
-   VOLATILE
-   AS                $$
-DECLARE
-   tokenTypeId       INTEGER;
-BEGIN
-   -- searches for tokenType ID
-   SELECT            id                   INTO  tokenTypeId
-      FROM           tokenType
-      WHERE          id                   =     ttId;
-
-   -- updates existing token type
-   IF ( tokenTypeId IS NOT NULL ) THEN
-      UPDATE         tokenType
-         SET         name                 =     ttName,
-                     description          =     ttDesc
-         WHERE       id                   =     ttId
-         RETURNING   id                   INTO  tokenTypeId;
-      RETURN tokenTypeId;
-   END IF;
-
-   -- adds new tokenType
-   INSERT INTO       tokenType
-                     (  id,
-                        name,
-                        description
-                     )
-      VALUES         (  ttId,
-                        ttName,
-                        ttDesc
-                     )
-      RETURNING      id                   INTO  tokenTypeId;
-
-   RETURN            tokenTypeId;
-END;
-$$;
-
-
 -- /////////////////////////
 -- //                     //
 -- //  Trigger Functions  //
@@ -501,9 +501,9 @@ INSERT INTO
 
 
 -- add token types
-SELECT pigeon_tokenType_add(  0,  'unknown',       'Unknown user token' );
-SELECT pigeon_tokenType_add(  1,  'login',         'login session' );
-SELECT pigeon_tokenType_add(  2,  'application',   'application token' );
+SELECT pigeon_tokenType(   0,  'unknown',          'Unknown user token' );
+SELECT pigeon_tokenType(   1,  'login',            'login session' );
+SELECT pigeon_tokenType(   2,  'application',      'application token' );
 
 
 -- add token types
