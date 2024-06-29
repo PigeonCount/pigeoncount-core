@@ -94,17 +94,17 @@ CREATE INDEX
  *  id
  *  : The primary key of a specific entry
  *
- *  typeName
+ *  name
  *  : the name of the token type
  *
- *  tokenDesc
+ *  description
  *  : token type description
  */
 CREATE TABLE IF NOT EXISTS tokenType
 (
    id                INT               NOT NULL UNIQUE,
-   typeName          VARCHAR(32)       NOT NULL,
-   typeDesc          VARCHAR(128)      NOT NULL,
+   name              VARCHAR(32)       NOT NULL,
+   description       VARCHAR(128)      NOT NULL,
    PRIMARY KEY       ( id )
 );
 CREATE INDEX
@@ -113,10 +113,10 @@ CREATE INDEX
    USING             btree
                      ( id );
 CREATE INDEX
-   IF NOT EXISTS     tokenType_idx_typeName
+   IF NOT EXISTS     tokenType_idx_name
    ON                tokenType
    USING             hash
-                     ( typeName );
+                     ( name );
 
 
 /*
@@ -437,8 +437,8 @@ BEGIN
    -- updates existing token type
    IF ( tokenTypeId IS NOT NULL ) THEN
       UPDATE         tokenType
-         SET         typeName             =     ttName,
-                     typeDesc             =     ttDesc
+         SET         name                 =     ttName,
+                     description          =     ttDesc
          WHERE       id                   =     ttId
          RETURNING   id                   INTO  tokenTypeId;
       RETURN tokenTypeId;
@@ -447,8 +447,8 @@ BEGIN
    -- adds new tokenType
    INSERT INTO       tokenType
                      (  id,
-                        typeName,
-                        typeDesc
+                        name,
+                        description
                      )
       VALUES         (  ttId,
                         ttName,
